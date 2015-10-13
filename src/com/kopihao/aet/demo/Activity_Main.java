@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
- * This project demo an EditText which able to clear text with its icon<br>
+ * This project demo an EditText which able to do sth with its icon<br>
  * This UI component is absolutely inherited from native EditText.<br>
  * When this UI component is needed, my first thought is<br>
  * A ViewGroup which contain EditText + ImageView.<br>
