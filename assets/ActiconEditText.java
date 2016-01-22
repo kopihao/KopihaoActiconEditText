@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
+import android.text.TextUtils.TruncateAt;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,10 +15,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-public class ActiconEditText extends EditText implements View.OnTouchListener, TextWatcher {
+public class ActiconEditText extends EditText implements View.OnTouchListener, TextWatcher, View.OnFocusChangeListener {
 
 	private Drawable acticon;
-	private boolean cetFocus;
+	private boolean hasFocus;
 	private OnActiconClickListener oic_acticon;
 
 	public ActiconEditText(final Context context) {
@@ -35,10 +36,10 @@ public class ActiconEditText extends EditText implements View.OnTouchListener, T
 		initView(context);
 	}
 
-	public void setActicon(Drawable dr) {
-		this.invalidateDrawable(dr);
-		this.acticon = dr;
-		dr.setBounds(0, 0, dr.getIntrinsicWidth(), dr.getIntrinsicHeight());
+	public void setActicon(Drawable d) {
+		this.invalidateDrawable(d);
+		this.acticon = d;
+		d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
 		this.refreshDrawableState();
 		this.invalidate();
 		this.requestLayout();
@@ -54,13 +55,17 @@ public class ActiconEditText extends EditText implements View.OnTouchListener, T
 		this.requestLayout();
 	}
 
+	// --------------$$$$$$$$$$$$$$$4---------------
+
 	@SuppressLint("ClickableViewAccessibility")
 	protected void initView(final Context context) {
 		acticon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.presence_offline, null);
 		acticon.setBounds(0, 0, acticon.getIntrinsicWidth(), acticon.getIntrinsicHeight());
 		this.setOnTouchListener(this);
 		this.addTextChangedListener(this);
-		this.setOnFocusChangeListener(null);
+		this.setOnFocusChangeListener(this);
+		this.setSingleLine(true);
+		this.setEllipsize(TruncateAt.END);
 		this.setOnActiconClickListener(new OnActiconClickListener() {
 			@Override
 			public void onClick(String input) {
@@ -73,23 +78,17 @@ public class ActiconEditText extends EditText implements View.OnTouchListener, T
 		oic_acticon = l;
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
-	public void setOnFocusChangeListener(final OnFocusChangeListener l) {
-		super.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				cetFocus = hasFocus;
-				// Only show clearing icon if the view is focused
-				if (hasFocus) {
-					setCompoundDrawables(null, null, (getText().toString().length() == 0) ? null : acticon, null);
-				} else {
-					setCompoundDrawables(null, null, null, null);
-				}
-				if (l != null) {
-					l.onFocusChange(v, hasFocus);
-				}
-			}
-		});
+	public void onFocusChange(final View v, final boolean hasFocus) {
+		this.hasFocus = hasFocus;
+
+		// Only show clearing icon if the view is focussed
+		if (hasFocus) {
+			this.setCompoundDrawables(null, null, this.getText().toString().isEmpty() ? null : acticon, null);
+		} else {
+			this.setCompoundDrawables(null, null, null, null);
+		}
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -101,14 +100,15 @@ public class ActiconEditText extends EditText implements View.OnTouchListener, T
 		if (event.getAction() != MotionEvent.ACTION_UP) {
 			return false;
 		}
+
 		if (event.getX() > this.getWidth() - this.getPaddingRight() - acticon.getIntrinsicWidth()) {
 			oic_acticon.onClick(this.getText() + "");
 			this.setCompoundDrawables(null, null, null, null);
 			this.clearFocus();
 			InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
-			this.clearFocus();
 		}
+
 		this.setEnabled(true);
 		this.setSelection(this.getText().length());
 		return false;
@@ -122,10 +122,9 @@ public class ActiconEditText extends EditText implements View.OnTouchListener, T
 	@Override
 	public void onTextChanged(final CharSequence text, final int start, final int lengthBefore, final int lengthAfter) {
 		super.onTextChanged(text, start, lengthBefore, lengthAfter);
-
 		// If it is not in focus, the text was added programmatically and we
 		// should not display the clear icon
-		if (!this.cetFocus) {
+		if (!this.hasFocus) {
 			return;
 		}
 

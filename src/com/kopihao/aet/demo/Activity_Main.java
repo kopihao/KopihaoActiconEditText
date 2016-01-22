@@ -39,7 +39,7 @@ import android.widget.Toast;
  */
 public class Activity_Main extends Activity {
 
-	private ActiconEditText cetInput;
+	private ActiconEditText aetInput;
 	private ImageView ivIcon1;
 	private ImageView ivIcon2;
 	private ImageView ivIcon3;
@@ -49,7 +49,7 @@ public class Activity_Main extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_main);
-		cetInput = (ActiconEditText) findViewById(R.id.cetInput);
+		aetInput = (ActiconEditText) findViewById(R.id.aetInput);
 		ivIcon1 = (ImageView) findViewById(R.id.ivIcon1);
 		ivIcon2 = (ImageView) findViewById(R.id.ivIcon2);
 		ivIcon3 = (ImageView) findViewById(R.id.ivIcon3);
@@ -65,30 +65,30 @@ public class Activity_Main extends Activity {
 	OnClickListener oic_ivIcon = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			cetInput.clearFocus();
+			aetInput.clearFocus();
 			v.requestFocus();
 			switch (v.getId()) {
 
 			case R.id.ivIcon1:
-				cetInput.setActicon(android.R.drawable.ic_delete);
+				aetInput.setActicon(android.R.drawable.ic_delete);
 				break;
 			case R.id.ivIcon2:
-				cetInput.setActicon(android.R.drawable.ic_btn_speak_now);
+				aetInput.setActicon(android.R.drawable.ic_btn_speak_now);
 
 				break;
 			case R.id.ivIcon3:
-				cetInput.setActicon(android.R.drawable.ic_input_add);
+				aetInput.setActicon(android.R.drawable.ic_input_add);
 
 				break;
 			case R.id.ivIcon4:
-				cetInput.setActicon(android.R.drawable.ic_input_get);
+				aetInput.setActicon(android.R.drawable.ic_input_get);
 				break;
 
 			default:
 				return;
 			}
-			Toast.makeText(Activity_Main.this, "CET.Icon changed.", Toast.LENGTH_SHORT).show();
-			cetInput.requestFocus();
+			Toast.makeText(Activity_Main.this, "AET.icon changed.", Toast.LENGTH_SHORT).show();
+			aetInput.requestFocus();
 
 		}
 	};
